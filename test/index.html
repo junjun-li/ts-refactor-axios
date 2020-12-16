@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>Title</title>
+  </head>
+  <body>
+  
+  </body>
+  <script>
+  // function fruits() {
+  // }
+  // fruits.prototype = {
+  //   color: 'red',
+  //   say: function() {
+  //     console.log(`My color is ${this.color}`)
+  //   }
+  // }
+  // let apple = new fruits()
+  // apple.say()
+  // let apple = {
+  //   color: 'red',
+  //   say: function() {
+  //     console.log(`My color is ${this.color}`)
+  //   }
+  // }
+  // apple.say()
+  // let banana = {
+  //   color: 'yellow'
+  // }
+  // apple.say.call(banana)
+  
+  // 🌰1
+  // 菜鸟教程
+  // 坑1
+  // 是用var声明的变量, 会挂载到window上面, 可以使用window.xxx来访问
+  // 但是使用let声明的变量, 就不在window上面的
+  var name = '张三'
+  var age = 18
+  let obj = {
+    name: '李四',
+    objAge: this.age,
+    myFun: function() {
+      console.log(`我的名字叫${this.name}, 我今年${this.age}岁`)
+    },
+    myFunc: function(from, sex) {
+      console.log(`我的名字叫${this.name}, 我今年${this.age}岁, 我来自${from}, 性别${sex}`)
+    }
+  }
+  console.log(obj.objAge) // 18
+  console.log(obj.myFun()) // My name is 李四, I am undefined years old   this指向了obj对象
+  
+  var ww = '王五'
+  function logWw() {
+    console.log(this.ww)
+  }
+  logWw() // 王五
+  
+  var zl = {
+    name: '赵六',
+    age: 99
+  }
+  // obj.myFun.call(zl)// 赵六年龄 99
+  // obj.myFun.apply(zl) // 赵六年龄 99
+  // obj.myFun.bind(zl)() // 赵六年龄 99
+  // 以上出了 bind 方法后面多了个 () 外 ，结果返回都一致！
+  // 由此得出结论，bind 返回的是一个新的函数，你必须调用它才会被执行。
+  
+  obj.myFunc.call(zl, '上海', '男') // 我的名字叫赵六, 我今年99岁, 我来自上海, 性别男
+  obj.myFunc.apply(zl, ['上海', '男']) // 我的名字叫赵六, 我今年99岁, 我来自上海, 性别男
+  obj.myFunc.bind(zl, '上海', '男') // 我的名字叫赵六, 我今年99岁, 我来自上海, 性别男
+  obj.myFunc.bind(zl, ['上海', '男']) // 我的名字叫赵六, 我今年99岁, 我来自上海,男, 性别 undefined
+  </script>
+</html>
