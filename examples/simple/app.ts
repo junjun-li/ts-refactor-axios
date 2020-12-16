@@ -5,7 +5,8 @@ axios({
   url: '/simple/get',
   params: {
     a: 1,
-    b: 2
+    name: '张三',
+    age: [ new Date(), 10, '年纪' ]
   }
 })
 
