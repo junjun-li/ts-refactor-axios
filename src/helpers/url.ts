@@ -64,6 +64,7 @@ import { isDate, isObject } from './util'
 buildURL('/base/get', { name: '张三', age: 18 })
 
 export function buildURL(url: string, params?: any): string {
+  debugger
   if (!params) {
     return url
   }
