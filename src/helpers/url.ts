@@ -61,16 +61,32 @@
 
 import { isDate, isObject } from './util'
 
-buildURL('/base/get', { name: '张三', age: 18 })
+// name1='va&lu=e1' 如果服务端要解析这个字符串, 就会产生歧义, 所以需要将字符串encode
+function encode(val: string): string {
+  return encodeURIComponent(val)
+    .replace(/%40/g, '@')
+    .replace(/%3A/ig, ':') // 带字母的需要加i 让其忽略大小写 /%3A/ === /%3a/
+    .replace(/%24/g, '$')
+    .replace(/%2C/ig, ',')
+    .replace(/%20/g, '+')
+    .replace(/%25B/ig, '[')
+    .replace(/%25D/ig, ']')
+}
 
 export function buildURL(url: string, params?: any): string {
-  debugger
+  console.log(url)
   if (!params) {
     return url
   }
-  return url
+  // return url
   // 思路: 遍历 params 定义一个键值对数组 然后把遍历结果, key value的形式 push到键值对数组中 然后通过join拼接到url中
-
+  // { name: '张三', age: [new Date(), 10, '年纪'] } 转换为如下格式
+  // parts = [
+  //  'name=张三',
+  //  'age[]=2020-12-16T14:15:40.229Z',
+  //  'age[]=10'
+  //  'age[]=年纪'
+  // ]
   const parts: string[] = []
   // 知识点1: forEach中的return是跳不出函数的, return指跳到下一次循环
   Object.keys(params).forEach(key => {
@@ -84,7 +100,7 @@ export function buildURL(url: string, params?: any): string {
       values = val
       key += '[]'
     } else {
-      values = [val]
+      values = [ val ]
     }
     // 对这个值进行判断, 看看是否是对象类型,日期类型
     values.forEach(val => {
@@ -93,9 +109,22 @@ export function buildURL(url: string, params?: any): string {
       } else if (isObject(val)) {
         val = JSON.stringify(val)
       }
-      parts.push(`${key}=${val}`)
+      parts.push(`${ encode(key) }=${ encode(val) }`)
     })
   })
+
+  let serializedParams = parts.join('&')
+  if (serializedParams) {
+    // 需求: 忽略哈希后面的url
+    const markIndex = url.indexOf('#')
+    if (markIndex !== -1) {
+      url = url.slice(0, markIndex)
+    }
+    // 如果url后面本身就有参数, 拼接一个 &
+    // 否则url没参数, 直接 ? + serializedParams
+    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams
+  }
+  return url
 }
 
 
